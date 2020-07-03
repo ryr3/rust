@@ -1,4 +1,5 @@
 #![allow(missing_copy_implementations)]
+#![deny(unsafe_op_in_unsafe_fn)]
 
 use crate::fmt;
 use crate::io::{self, BufRead, ErrorKind, Initializer, IoSlice, IoSliceMut, Read, Write};
@@ -110,7 +111,8 @@ impl Read for Empty {
 
     #[inline]
     unsafe fn initializer(&self) -> Initializer {
-        Initializer::nop()
+        // SAFETY: Read is guaranteed to work on uninitialized memory
+        unsafe { Initializer::nop() }
     }
 }
 #[stable(feature = "rust1", since = "1.0.0")]
@@ -186,7 +188,8 @@ impl Read for Repeat {
 
     #[inline]
     unsafe fn initializer(&self) -> Initializer {
-        Initializer::nop()
+        // SAFETY: Read is guaranteed to work on uninitialized memory
+        unsafe { Initializer::nop() }
     }
 }
 

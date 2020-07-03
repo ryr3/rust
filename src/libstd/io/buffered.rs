@@ -1,4 +1,5 @@
 //! Buffering wrappers for I/O traits
+#![deny(unsafe_op_in_unsafe_fn)]
 
 use crate::io::prelude::*;
 
@@ -297,7 +298,8 @@ impl<R: Read> Read for BufReader<R> {
 
     // we can't skip unconditionally because of the large buffer case in read.
     unsafe fn initializer(&self) -> Initializer {
-        self.inner.initializer()
+        // SAFETY: Read is guaranteed to work on uninitialized memory
+        unsafe { self.inner.initializer() }
     }
 }
 
